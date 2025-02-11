@@ -27,7 +27,7 @@ archive.zip
 *~
 .*.sw?
 .cache
-
+.spotify_cache
 # macOS
 .DS_Store
 

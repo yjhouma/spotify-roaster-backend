@@ -6,7 +6,6 @@ from models import SpotifySession
 class SessionManager:
     def __init__(self):
         self._sessions: Dict[str, SpotifySession] = {}
-        print('SessionManager Created')
 
     def create_session(self, access_token: str, refresh_token: str, expires_in: int) -> str:
         session_id = str(uuid.uuid4())
@@ -20,15 +19,11 @@ class SessionManager:
         )
         
         self._sessions[session_id] = session
-        print(f"Created new session: {session_id}")
-        print(f"Current sessions: {self._sessions}")
-
         return session_id
     
     def get_session(self, session_id: str) -> Optional[SpotifySession]:
         session = self._sessions.get(session_id)
-        print(f"Getting session {session_id}: {'Found' if session else 'Not found'}")
-        print(f"Current sessions in store: {list(self._sessions.keys())}")
+
         return session
     
     def remove_session(self, session_id: str) -> None:

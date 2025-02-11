@@ -15,7 +15,7 @@ settings = get_settings()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # Change this to front_end url later on prod
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -64,7 +64,7 @@ async def spotify_callback(code: str):
             key="session_id",
             value=session_id,
             httponly=True,
-            secure=False,  # Enable in production with HTTPS
+            secure=False,  # Enable in production with HTTPS, Change this in prod to True
             samesite="lax",
             max_age=1800  # 30 minutes
         )

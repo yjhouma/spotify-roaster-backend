@@ -1,6 +1,6 @@
 from google import genai
-from app.config import get_settings
-from models import FullRoast
+from config import get_settings
+from models import FullRoast, TopArtistsResponse
 
 setting = get_settings()
 
@@ -15,9 +15,13 @@ Then you will create a more coherent verdict about my music taste about 2 to 4 p
 
 '''
 
-def generate_gemini_response(artists: list[str]) -> FullRoast:
+async def generate_gemini_response(artists: TopArtistsResponse) -> FullRoast:
     # artists = 'Here are my top 10 artists: Tyler, The Cereator; Kendrick Lamar; Frank Ocean; New Jeans; Doechii; Kanye West; XG; Charli xcx; SZA; N.E.R.D'
-    inpt = 'Here are my top 10 artists: ' + '; '.join(artists)
+    art = []
+    for a in artists:
+        art.append(a['name'])
+
+    inpt = 'Here are my top 10 artists: ' + '; '.join(art)
 
     client = genai.Client(api_key=setting.GEMINI_API_KEY)
     response = client.models.generate_content(

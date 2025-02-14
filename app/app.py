@@ -7,7 +7,8 @@ from session import session_manager
 import spotify
 from config import get_settings
 from session import session_manager
-from models import TopArtistsResponse, SpotifySession
+from models import TopArtistsResponse, SpotifySession, FullRoast
+import gemini
 
 
 app = FastAPI()
@@ -48,7 +49,6 @@ async def spotify_login():
 
 @app.get("/api/spotify/callback")
 async def spotify_callback(code: str):
-    print(code)
     try:
         sp_oauth = spotify.create_spotify_oauth()
         token_info = sp_oauth.get_access_token(code)
@@ -76,12 +76,15 @@ async def spotify_callback(code: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/spotify/top-artists", response_model=TopArtistsResponse)
+@app.get("/api/spotify/top-artists", response_model=FullRoast)
 async def get_top_artists(session: SpotifySession = Depends(get_current_session)):
     """Get user's top artists using session token."""
     try:
         artists = await spotify.get_user_top_artists(session.access_token)
-        return {"artists": artists}
+        roasts = await gemini.generate_gemini_response(artists)
+
+
+        return roasts
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

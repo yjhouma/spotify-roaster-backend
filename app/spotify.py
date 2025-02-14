@@ -49,7 +49,7 @@ async def get_user_top_artists(token):
             
         return artists
     except Exception as e:
-        print(f"Error fetching top artists: {e}")
+        # print(f"Error fetching top artists: {e}")
         raise
 
 if __name__ == '__main__':

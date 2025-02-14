@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     SPOTIFY_CLIENT_SECRET: str
     SPOTIFY_REDIRECT_URI: str
     FRONTEND_URL: str
+    GEMINI_API_KEY: str
 
     
     class Config:

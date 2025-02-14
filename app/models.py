@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 from typing import List, Optional
 from datetime import datetime
 
@@ -16,3 +16,13 @@ class Artist(BaseModel):
 
 class TopArtistsResponse(BaseModel):
     artists: List[Artist]
+
+
+class RoastIndividualArtist(BaseModel):
+    artist: str
+    snarky_introduction: str
+    comments: str
+
+class FullRoast(BaseModel):
+    artist_comment: list[RoastIndividualArtist]
+    final_verdict: str

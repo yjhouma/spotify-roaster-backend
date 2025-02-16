@@ -31,7 +31,11 @@ async def get_current_session(session_id: Optional[str] = Cookie(None)):
     if not session:
         raise HTTPException(status_code=401, detail="Invalid Session")
     return session
-    
+
+
+@app.get("/health")
+async def healthcheck():
+    return {"status": "healthy"}
 
 @app.get("/api/spotify/session")
 async def get_session_status(session: SpotifySession = Depends(get_current_session)):

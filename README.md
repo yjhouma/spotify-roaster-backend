@@ -3,7 +3,9 @@
 **Currently:**
     - Can authenticate users to spotify
     - Save spotify token to cookie
+    - Contenerized in Docker
+    - Connected to Gemini
 
 **To do:**
-    - Connect to OpenAI/DeepSeek/Grok to generate the roasting test
     - send the roasting test to the front end
+    - Test connection to Front End app

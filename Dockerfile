@@ -8,6 +8,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
+
+    
+
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
@@ -20,6 +23,8 @@ RUN useradd -m -u 1000 appuser
 
 # Set working directory
 WORKDIR /app
+
+RUN apt-get -y update; apt-get -y install curl
 
 # Copy wheels from builder stage
 COPY --from=builder /app/wheels /wheels
@@ -45,4 +50,5 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "app/app.py"]
+# CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -16,7 +16,7 @@ settings = get_settings()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Change this to front_end url later on prod
+    allow_origins=[settings.FRONTEND_URL], # Change this to front_end url later on prod
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -36,6 +36,15 @@ async def get_current_session(session_id: Optional[str] = Cookie(None)):
 @app.get("/health")
 async def healthcheck():
     return {"status": "healthy"}
+
+@app.get("/api/debug/session")
+async def debug_session(session_id: Optional[str] = Cookie(None)):
+    """Debug endpoint to check session cookie."""
+    return {
+        "has_cookie": session_id is not None,
+        "session_id": session_id,
+        "is_valid": session_manager.get_session(session_id) is not None if session_id else False
+    }
 
 @app.get("/api/spotify/session")
 async def get_session_status(session: SpotifySession = Depends(get_current_session)):
@@ -63,16 +72,16 @@ async def spotify_callback(code: str):
             expires_in=token_info['expires_in']
         )
 
-        response = RedirectResponse(url=f"{settings.FRONTEND_URL}")
+        response = RedirectResponse(url=f"{settings.FRONTEND_URL}/callback")
         response.set_cookie(
             key="session_id",
             value=session_id,
             httponly=True,
             secure=False,  # Enable in production with HTTPS, Change this in prod to True
-            samesite="lax",
+            samesite="none",
             max_age=1800  # 30 minutes
         )
-
+        print(f"Setting cookie: session_id={session_id}")
         return response
 
 

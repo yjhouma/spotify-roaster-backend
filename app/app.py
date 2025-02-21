@@ -76,10 +76,10 @@ async def spotify_callback(code: str):
         response.set_cookie(
             key="session_id",
             value=session_id,
-            httponly=True,
-            secure=False,  # Enable in production with HTTPS, Change this in prod to True
+            httponly=False,
+            secure=True,  # Enable in production with HTTPS, Change this in prod to True
             samesite="none",
-            max_age=1800  # 30 minutes
+            max_age=1800,  # 30 minutes
         )
         print(f"Setting cookie: session_id={session_id}")
         return response

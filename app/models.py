@@ -25,4 +25,5 @@ class RoastIndividualArtist(BaseModel):
 
 class FullRoast(BaseModel):
     artist_comment: list[RoastIndividualArtist]
+    verdict_title: str
     final_verdict: str

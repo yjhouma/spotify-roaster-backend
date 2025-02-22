@@ -93,7 +93,8 @@ async def spotify_callback(code: str):
             secure=True,  # Enable in production with HTTPS, Change this in prod to True
             samesite="none",
             max_age=1800,  # 30 minutes
-            path="/"
+            path="/",
+            domain=settings.FRONTEND_URL
         )
         return response
 

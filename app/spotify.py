@@ -30,6 +30,8 @@ async def get_user_top_artists(token):
     try:
         sp = spotipy.Spotify(auth=token)
         # Get top artists from the last 6 months
+
+        print(sp.current_user())
         results = sp.current_user_top_artists(
             limit=10,
             offset=0,

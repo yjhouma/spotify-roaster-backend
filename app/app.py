@@ -92,6 +92,7 @@ async def spotify_callback(code: str):
 async def get_top_artists(session: SpotifySession = Depends(get_current_session)):
     """Get user's top artists using session token."""
     try:
+        print(f'running the api for {session.session_id}')
         artists = await spotify.get_user_top_artists(session.access_token)
         roasts = await gemini.generate_gemini_response(artists)
 

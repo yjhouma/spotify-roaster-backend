@@ -22,7 +22,6 @@ def create_spotify_oauth():
         redirect_uri=settings.SPOTIFY_REDIRECT_URI,
         scope="user-top-read",
         open_browser=True,
-        cache_path='.spotify_cache' 
     )
 
 async def get_user_top_artists(token):

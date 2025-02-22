@@ -82,7 +82,8 @@ async def spotify_callback(code: str):
             refresh_token=token_info['refresh_token'],
             expires_in=token_info['expires_in']
         )
-
+        print(f'creating Session ID: {session_id}')
+        print(f'for token: {access_token}')
         response = RedirectResponse(url=f"{settings.FRONTEND_URL}/callback")
         response.set_cookie(
             key="session_id",

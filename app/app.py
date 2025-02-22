@@ -24,14 +24,25 @@ app.add_middleware(
 
 
 async def get_current_session(session_id: Optional[str] = Cookie(None)):
+    print(f"Received session_id: {session_id}")  
+
     if not session_id:
+        print("No session cookie found")
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     session = session_manager.get_session(session_id=session_id)
+    print("Session Recieved")
     if not session:
+        print(f"Invalid session ID: {session_id}")
         raise HTTPException(status_code=401, detail="Invalid Session")
     return session
 
+@app.get("/api/debug/cookie")
+async def debug_cookie(session_id: Optional[str] = Cookie(None)):
+    return {
+        "has_cookie": session_id is not None,
+        "session_id": session_id
+    }
 
 @app.get("/health")
 async def healthcheck():

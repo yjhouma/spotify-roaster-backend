@@ -24,44 +24,44 @@ app.add_middleware(
 )
 
 
-async def get_current_session(session_id: Optional[str] = Cookie(None)):
-    print(f"Received session_id: {session_id}")  
+# async def get_current_session(session_id: Optional[str] = Cookie(None)):
+#     print(f"Received session_id: {session_id}")  
 
-    if not session_id:
-        print("No session cookie found")
-        raise HTTPException(status_code=401, detail="Not authenticated")
+#     if not session_id:
+#         print("No session cookie found")
+#         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    session = session_manager.get_session(session_id=session_id)
-    print("Session Recieved")
-    if not session:
-        print(f"Invalid session ID: {session_id}")
-        raise HTTPException(status_code=401, detail="Invalid Session")
-    return session
+#     session = session_manager.get_session(session_id=session_id)
+#     print("Session Recieved")
+#     if not session:
+#         print(f"Invalid session ID: {session_id}")
+#         raise HTTPException(status_code=401, detail="Invalid Session")
+#     return session
 
-@app.get("/api/debug/cookie")
-async def debug_cookie(session_id: Optional[str] = Cookie(None)):
-    return {
-        "has_cookie": session_id is not None,
-        "session_id": session_id
-    }
+# @app.get("/api/debug/cookie")
+# async def debug_cookie(session_id: Optional[str] = Cookie(None)):
+#     return {
+#         "has_cookie": session_id is not None,
+#         "session_id": session_id
+#     }
 
 @app.get("/health")
 async def healthcheck():
     return {"status": "healthy"}
 
-@app.get("/api/debug/session")
-async def debug_session(session_id: Optional[str] = Cookie(None)):
-    """Debug endpoint to check session cookie."""
-    return {
-        "has_cookie": session_id is not None,
-        "session_id": session_id,
-        "is_valid": session_manager.get_session(session_id) is not None if session_id else False
-    }
+# @app.get("/api/debug/session")
+# async def debug_session(session_id: Optional[str] = Cookie(None)):
+#     """Debug endpoint to check session cookie."""
+#     return {
+#         "has_cookie": session_id is not None,
+#         "session_id": session_id,
+#         "is_valid": session_manager.get_session(session_id) is not None if session_id else False
+#     }
 
-@app.get("/api/spotify/session")
-async def get_session_status(session: SpotifySession = Depends(get_current_session)):
-    """Check if the session is valid."""
-    return {"status": "authenticated", "session": session}
+# @app.get("/api/spotify/session")
+# async def get_session_status(session: SpotifySession = Depends(get_current_session)):
+#     """Check if the session is valid."""
+#     return {"status": "authenticated", "session": session}
 
 @app.get("/api/spotify/login")
 async def spotify_login():
@@ -78,24 +78,25 @@ async def spotify_callback(code: str):
         sp_oauth = spotify.create_spotify_oauth()
         token_info = sp_oauth.get_access_token(code)
         access_token = token_info['access_token']
-        session_id = session_manager.create_session(
-            access_token=token_info['access_token'],
-            refresh_token=token_info['refresh_token'],
-            expires_in=token_info['expires_in']
-        )
-        print(f'creating Session ID: {session_id}')
-        print(f'for token: {access_token}')
-        response = RedirectResponse(url=f"{settings.FRONTEND_URL}/callback")
-        response.set_cookie(
-            key="session_id",
-            value=session_id,
-            httponly=True,
-            secure=True,  # Enable in production with HTTPS, Change this in prod to True
-            samesite="none",
-            domain=".onrender.com",
-            max_age=1800,  # 30 minutes
-            path="/"
-        )
+        # session_id = session_manager.create_session(
+        #     access_token=token_info['access_token'],
+        #     refresh_token=token_info['refresh_token'],
+        #     expires_in=token_info['expires_in']
+        # )
+        # print(f'creating Session ID: {session_id}')
+        # print(f'for token: {access_token}')
+        response = RedirectResponse(url=f"{settings.FRONTEND_URL}/callback?token={access_token}")
+        print('Sending Access Token')
+        # response.set_cookie(
+        #     key="session_id",
+        #     value=session_id,
+        #     httponly=True,
+        #     secure=True,  # Enable in production with HTTPS, Change this in prod to True
+        #     samesite="none",
+        #     domain=".onrender.com",
+        #     max_age=1800,  # 30 minutes
+        #     path="/"
+        # )
         return response
 
 
@@ -104,11 +105,11 @@ async def spotify_callback(code: str):
 
 
 @app.get("/api/spotify/top-artists", response_model=FullRoast)
-async def get_top_artists(session: SpotifySession = Depends(get_current_session)):
+async def get_top_artists(token: str):
     """Get user's top artists using session token."""
     try:
-        print(f'running the api for {session.session_id}')
-        artists = await spotify.get_user_top_artists(session.access_token)
+        # print(f'running the api for {session.session_id}')
+        artists = await spotify.get_user_top_artists(token)
         roasts = await gemini.generate_gemini_response(artists)
 
 

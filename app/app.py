@@ -81,7 +81,6 @@ async def spotify_callback(code: str):
             samesite="none",
             max_age=1800,  # 30 minutes
         )
-        print(f"Setting cookie: session_id={session_id}")
         return response
 
 
